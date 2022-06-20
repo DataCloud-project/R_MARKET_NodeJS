@@ -1,0 +1,553 @@
+openapi: 3.1.1
+info:
+  title: DataCloud Node.JS Server
+  description: "This is a sample server DataCLoud server."
+  termsOfService: http://datacloud.swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://datacloud.swagger.io
+servers:
+- url: https://virtserver.swaggerhub.com/ssgUPC/NodeJS/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://datacloud.swagger.io/v2
+- url: http://datacloud.swagger.io/v2
+tags:
+- name: User
+  description: Operations about user
+- name: findResources
+  description: Extracts  the  resource requirements from the pipeline description
+    and queries the marketplace for matching provider resources. ADA-PIPE uses this
+    interface for scheduling the pipeline.
+- name: createContract
+  description: Provisions a set of resources by creating a smart contract with a beneficiary
+    using a cryptographic signature from the requester. It returns the dealID.
+- name: getResourcesForPipeline
+  description: "Returns the provisioned resources (by returning the IP address of\
+    \ the Worker nodes) for the input pipeline, authenticated and restricted to the\
+    \ provided beneficiary."
+paths:
+  /user:
+    post:
+      tags:
+      - User
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
+      x-swagger-router-controller: User
+  /user/login:
+    get:
+      tags:
+      - User
+      summary: Logs user into the system
+      operationId: loginUser
+      parameters:
+      - name: username
+        in: query
+        description: The user name for login
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: The password for login in clear text
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              style: simple
+              explode: false
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              style: simple
+              explode: false
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+                x-content-type: application/xml
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Invalid username/password supplied
+          content: {}
+      x-swagger-router-controller: User
+  /user/logout:
+    get:
+      tags:
+      - User
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      x-swagger-router-controller: User
+  /user/{username}:
+    put:
+      tags:
+      - User
+      summary: Updated user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+      - name: username
+        in: path
+        description: name that need to be updated
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Updated user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "400":
+          description: Invalid user supplied
+          content: {}
+        "404":
+          description: User not found
+          content: {}
+      x-codegen-request-body-name: body
+      x-swagger-router-controller: User
+    delete:
+      tags:
+      - User
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+      - name: username
+        in: path
+        description: The name that needs to be deleted
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Invalid username supplied
+          content: {}
+        "404":
+          description: User not found
+          content: {}
+      x-swagger-router-controller: User
+  /Resources:
+    post:
+      tags:
+      - findResources
+      summary: Find resources by DSL
+      description: "Multiple tags can be provided with comma separated strings. Use\
+        \         tag1, tag2, tag3 for testing."
+      operationId: findResourcesByDSL
+      requestBody:
+        description: Tags to filter by DSL model
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ResourceDSL'
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponseDSL'
+                x-content-type: application/json
+        "400":
+          description: Invalid tag value
+          content: {}
+      security:
+      - datacloud_auth:
+        - write:datcloudResources
+        - read:datcloudResources
+      x-codegen-request-body-name: DSL
+      x-swagger-router-controller: FindResources
+  /contract-creation:
+    post:
+      tags:
+      - createContract
+      summary: request for creation the contract
+      operationId: placeOrder
+      requestBody:
+        description: request for initiation of the deal
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/createContract'
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseForContractCreation'
+        "400":
+          description: Invalid Order
+          content: {}
+      x-codegen-request-body-name: Contract Initiation
+      x-swagger-router-controller: CreateContract
+  /check-contract-status:
+    get:
+      tags:
+      - createContract
+      summary: Returns the dealID and dealInfo for checking the status
+      description: Returns a map of status codes to quantities
+      operationId: getInventory
+      parameters:
+      - name: requestID
+        in: query
+        description: Please enter your requestID to know the status of the deal
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deal'
+      security:
+      - api_key: []
+      x-swagger-router-controller: CreateContract
+  /getResourcesForPipeline:
+    get:
+      tags:
+      - getResourcesForPipeline
+      summary: Returns the IP of provisioned resource
+      description: Returns a map of status codes to quantities
+      operationId: getResourcesForPipeline
+      parameters:
+      - name: dealID
+        in: query
+        description: Provide the dealID for collecting the Reserved resources' IP
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseforGetResource'
+      security:
+      - api_key: []
+      x-swagger-router-controller: GetResourcesForPipeline
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        uid:
+          type: string
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: boolean
+          description: User Status
+        walletAddress:
+          type: string
+      xml:
+        name: User
+    Param:
+      type: object
+      properties:
+        req1:
+          type: string
+        req2:
+          type: string
+      example:
+        req2: req2
+        req1: req1
+    Deal:
+      type: object
+      properties:
+        dealID:
+          type: string
+        TxHash:
+          type: string
+        Block Timestamp:
+          type: string
+        Requester:
+          type: string
+        Beneficiary:
+          type: string
+        Callback:
+          type: string
+        App:
+          type: string
+        Workerpool:
+          type: string
+        Dataset:
+          type: string
+        Params:
+          $ref: '#/components/schemas/Param'
+        Volume:
+          type: integer
+          format: int64
+        First task idx:
+          type: string
+        Block Number:
+          type: integer
+          format: int64
+        Category:
+          type: integer
+          format: int64
+        Trust:
+          type: integer
+          format: int64
+        Tag:
+          type: string
+        workerpool cost:
+          type: string
+        app cost:
+          type: string
+        dataset cost:
+          type: string
+        Start Time:
+          type: string
+        Final Time:
+          type: string
+      example:
+        App: App
+        Category: 1
+        Block Number: 6
+        dealID: dealID
+        TxHash: TxHash
+        Block Timestamp: Block Timestamp
+        Dataset: Dataset
+        workerpool cost: workerpool cost
+        Params:
+          req2: req2
+          req1: req1
+        Workerpool: Workerpool
+        Start Time: Start Time
+        Trust: 5
+        Final Time: Final Time
+        app cost: app cost
+        Requester: Requester
+        Callback: Callback
+        dataset cost: dataset cost
+        Volume: 0
+        First task idx: First task idx
+        Tag: Tag
+        Beneficiary: Beneficiary
+    executionRequirments:
+      type: object
+      properties:
+        min-instant:
+          type: integer
+          format: int64
+        max-instant:
+          type: integer
+          format: int64
+    ResourceProvider:
+      type: object
+      properties:
+        provider name:
+          type: string
+        instance type:
+          type: string
+        location:
+          type: string
+    environmentParameters:
+      type: object
+      properties:
+        req1:
+          type: string
+        req2:
+          type: string
+    quantativeParameters:
+      type: object
+      properties:
+        min-ncpu:
+          type: integer
+          format: int64
+        min-ram-mb:
+          type: integer
+          format: int64
+        min-storage-mb:
+          type: integer
+          format: int64
+    ResourceDSL:
+      type: object
+      properties:
+        pipelineID:
+          type: string
+        executionRequirements:
+          $ref: '#/components/schemas/executionRequirments'
+        ResourceProvider:
+          $ref: '#/components/schemas/ResourceProvider'
+        environmentparameters:
+          $ref: '#/components/schemas/environmentParameters'
+        quantativeparameters:
+          $ref: '#/components/schemas/quantativeParameters'
+        applicationID:
+          type: string
+        appRepoaddress:
+          type: string
+        Trust:
+          type: integer
+          format: int64
+        dataRepoaddress:
+          type: string
+        TaskExecutionTime:
+          type: string
+    ResponseDSL:
+      type: object
+      properties:
+        workerpoolsdetail:
+          type: array
+          xml:
+            name: workerpool
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/workerpooldetails'
+      example:
+        workerpoolsdetail:
+        - workerpoolAddress: workerpoolAddress
+          price: price
+        - workerpoolAddress: workerpoolAddress
+          price: price
+    workerpooldetails:
+      type: object
+      properties:
+        workerpoolAddress:
+          type: string
+        price:
+          type: string
+      example:
+        workerpoolAddress: workerpoolAddress
+        price: price
+    createContract:
+      type: object
+      properties:
+        pipelineID:
+          type: string
+        selectedworkepool:
+          type: array
+          xml:
+            name: workerpoolInfo
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/workerpooldetails'
+        beneficiaryInfo:
+          type: string
+        requesterInfo:
+          type: string
+        signature:
+          type: string
+    responseforGetResource:
+      type: object
+      properties:
+        pipelineID:
+          type: string
+        dealID:
+          type: string
+        workerpoolInfo:
+          type: array
+          xml:
+            name: workerpoolInfo
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/workerpooldetails'
+        IPAddress:
+          type: array
+          items:
+            type: string
+      example:
+        dealID: dealID
+        workerpoolInfo:
+        - workerpoolAddress: workerpoolAddress
+          price: price
+        - workerpoolAddress: workerpoolAddress
+          price: price
+        IPAddress:
+        - IPAddress
+        - IPAddress
+        pipelineID: pipelineID
+    responseForContractCreation:
+      type: object
+      properties:
+        Requester:
+          type: string
+        requestID:
+          type: string
+        status:
+          type: string
+      example:
+        Requester: Requester
+        requestID: requestID
+        status: status
+  securitySchemes:
+    datacloud_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://datacloud.swagger.io/oauth/dialog
+          scopes:
+            write:datcloudResources: modify order in your account
+            read:datcloudResources: read your order
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
