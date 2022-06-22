@@ -31,7 +31,7 @@ Upon [pull requests](#pull-requests) we use [ESLint checker rules](https://githu
 
 Please also make sure to provide a detailed description of your changes by adding a new section in the [CHANGELOG.md](https://github.com/DataCloud-project/R_MARKET_NodeJS/CHANGLOG.md) file before requesting the pull request.
 
-The pull request will be reviewed by at least one member of the [core development team](https://github.com/DataCloud-project/R-MARKET/README.md#core-development-team).
+The pull request will be reviewed by at least one member of the [core development team](https://github.com/DataCloud-project/R-MARKET/blob/main/README.md#core-development-team).
 
 ## Code branches
 
