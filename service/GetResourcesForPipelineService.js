@@ -14,13 +14,12 @@ exports.getResourcesForPipeline = function(dealID) {
     examples['application/json'] = {
   "dealID" : "dealID",
   "workerpoolInfo" : [ {
-    "workerpoolAddress" : "workerpoolAddress",
-    "price" : "price"
+    "workerpool" : "workerpool",
+    "workerIP" : "workerIP"
   }, {
-    "workerpoolAddress" : "workerpoolAddress",
-    "price" : "price"
+    "workerpool" : "workerpool",
+    "workerIP" : "workerIP"
   } ],
-  "IPAddress" : [ "IPAddress", "IPAddress" ],
   "pipelineID" : "pipelineID"
 };
     if (Object.keys(examples).length > 0) {

@@ -1,7 +1,10 @@
-openapi: 3.1.1
+openapi: 3.0.1
 info:
   title: DataCloud Node.JS Server
-  description: "This is a sample server DataCLoud server."
+  description: "This is a sample server Petstore server.  You can find out more about\
+    \     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net,\
+    \ #swagger](http://swagger.io/irc/).      For this sample, you can use the api\
+    \ key `special-key` to test the authorization     filters."
   termsOfService: http://datacloud.swagger.io/terms/
   contact:
     email: apiteam@swagger.io
@@ -18,7 +21,7 @@ servers:
 - url: https://datacloud.swagger.io/v2
 - url: http://datacloud.swagger.io/v2
 tags:
-- name: User
+- name: Wallet-creation
   description: Operations about user
 - name: findResources
   description: Extracts  the  resource requirements from the pipeline description
@@ -35,10 +38,10 @@ paths:
   /user:
     post:
       tags:
-      - User
-      summary: Create user
+      - Wallet-creation
+      summary: Create Wallet for the User
       description: This can only be done by the logged in user.
-      operationId: createUser
+      operationId: createWallet
       requestBody:
         description: Created user object
         content:
@@ -51,132 +54,13 @@ paths:
           description: successful operation
           content: {}
       x-codegen-request-body-name: body
-      x-swagger-router-controller: User
-  /user/login:
-    get:
-      tags:
-      - User
-      summary: Logs user into the system
-      operationId: loginUser
-      parameters:
-      - name: username
-        in: query
-        description: The user name for login
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: password
-        in: query
-        description: The password for login in clear text
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              style: simple
-              explode: false
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              style: simple
-              explode: false
-              schema:
-                type: string
-                format: date-time
-          content:
-            application/xml:
-              schema:
-                type: string
-                x-content-type: application/xml
-            application/json:
-              schema:
-                type: string
-        "400":
-          description: Invalid username/password supplied
-          content: {}
-      x-swagger-router-controller: User
-  /user/logout:
-    get:
-      tags:
-      - User
-      summary: Logs out current logged in user session
-      operationId: logoutUser
-      responses:
-        default:
-          description: successful operation
-          content: {}
-      x-swagger-router-controller: User
-  /user/{username}:
-    put:
-      tags:
-      - User
-      summary: Updated user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-      - name: username
-        in: path
-        description: name that need to be updated
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      requestBody:
-        description: Updated user object
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/User'
-        required: true
-      responses:
-        "400":
-          description: Invalid user supplied
-          content: {}
-        "404":
-          description: User not found
-          content: {}
-      x-codegen-request-body-name: body
-      x-swagger-router-controller: User
-    delete:
-      tags:
-      - User
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-      - name: username
-        in: path
-        description: The name that needs to be deleted
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      responses:
-        "400":
-          description: Invalid username supplied
-          content: {}
-        "404":
-          description: User not found
-          content: {}
-      x-swagger-router-controller: User
-  /Resources:
+      x-swagger-router-controller: WalletCreation
+  /resources:
     post:
       tags:
       - findResources
       summary: Find resources by DSL
-      description: "Multiple tags can be provided with comma separated strings. Use\
+      description: "Muliple tags can be provided with comma separated strings. Use\
         \         tag1, tag2, tag3 for testing."
       operationId: findResourcesByDSL
       requestBody:
@@ -184,7 +68,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/ResourceDSL'
+              $ref: '#/components/schemas/pipelineRequirements'
         required: true
       responses:
         "200":
@@ -205,11 +89,11 @@ paths:
         - read:datcloudResources
       x-codegen-request-body-name: DSL
       x-swagger-router-controller: FindResources
-  /contract-creation:
+  /deal:
     post:
       tags:
       - createContract
-      summary: request for creation the contract
+      summary: request for creation of the contract
       operationId: placeOrder
       requestBody:
         description: request for initiation of the deal
@@ -230,7 +114,7 @@ paths:
           content: {}
       x-codegen-request-body-name: Contract Initiation
       x-swagger-router-controller: CreateContract
-  /check-contract-status:
+  /deal/status:
     get:
       tags:
       - createContract
@@ -253,10 +137,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deal'
+        "400":
+          description: Contract has not been created yet! Come back after few minutes
+          content: {}
       security:
       - api_key: []
       x-swagger-router-controller: CreateContract
-  /getResourcesForPipeline:
+  /resources/IP:
     get:
       tags:
       - getResourcesForPipeline
@@ -289,23 +176,6 @@ components:
       properties:
         uid:
           type: string
-        username:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        phone:
-          type: string
-        userStatus:
-          type: boolean
-          description: User Status
-        walletAddress:
-          type: string
       xml:
         name: User
     Param:
@@ -327,21 +197,23 @@ components:
           type: string
         Block Timestamp:
           type: string
-        Requester:
+        requesterInfo:
           type: string
-        Beneficiary:
+        maestroAgentID:
           type: string
         Callback:
           type: string
-        App:
+        app:
           type: string
-        Workerpool:
+        workerpool:
+          type: array
+          items:
+            type: string
+        dataset:
           type: string
-        Dataset:
-          type: string
-        Params:
+        environmentParameters:
           $ref: '#/components/schemas/Param'
-        Volume:
+        volume:
           type: integer
           format: int64
         First task idx:
@@ -352,45 +224,53 @@ components:
         Category:
           type: integer
           format: int64
-        Trust:
+        tee:
+          type: boolean
+        gpu-availability:
+          type: boolean
+        workerpoolprice:
+          type: array
+          items:
+            type: integer
+            format: int64
+        appprice:
           type: integer
           format: int64
-        Tag:
-          type: string
-        workerpool cost:
-          type: string
-        app cost:
-          type: string
-        dataset cost:
-          type: string
+        datasetprice:
+          type: integer
+          format: int64
         Start Time:
           type: string
         Final Time:
           type: string
       example:
-        App: App
+        app: app
+        datasetprice: 2
+        appprice: 5
         Category: 1
+        requesterInfo: requesterInfo
         Block Number: 6
         dealID: dealID
         TxHash: TxHash
         Block Timestamp: Block Timestamp
-        Dataset: Dataset
-        workerpool cost: workerpool cost
-        Params:
+        Start Time: Start Time
+        workerpoolprice:
+        - 5
+        - 5
+        Final Time: Final Time
+        environmentParameters:
           req2: req2
           req1: req1
-        Workerpool: Workerpool
-        Start Time: Start Time
-        Trust: 5
-        Final Time: Final Time
-        app cost: app cost
-        Requester: Requester
+        volume: 0
         Callback: Callback
-        dataset cost: dataset cost
-        Volume: 0
+        maestroAgentID: maestroAgentID
+        tee: true
         First task idx: First task idx
-        Tag: Tag
-        Beneficiary: Beneficiary
+        gpu-availability: true
+        dataset: dataset
+        workerpool:
+        - workerpool
+        - workerpool
     executionRequirments:
       type: object
       properties:
@@ -422,79 +302,363 @@ components:
         min-ncpu:
           type: integer
           format: int64
+        max-ncpu:
+          type: integer
+          format: int64
         min-ram-mb:
+          type: integer
+          format: int64
+        max-ram-mb:
           type: integer
           format: int64
         min-storage-mb:
           type: integer
           format: int64
-    ResourceDSL:
-      type: object
-      properties:
-        pipelineID:
-          type: string
-        executionRequirements:
-          $ref: '#/components/schemas/executionRequirments'
-        ResourceProvider:
-          $ref: '#/components/schemas/ResourceProvider'
-        environmentparameters:
-          $ref: '#/components/schemas/environmentParameters'
-        quantativeparameters:
-          $ref: '#/components/schemas/quantativeParameters'
-        applicationID:
-          type: string
-        appRepoaddress:
-          type: string
-        Trust:
+        max-storage-mb:
           type: integer
           format: int64
-        dataRepoaddress:
+        min-cores:
+          type: integer
+          format: int64
+        max-cores:
+          type: integer
+          format: int64
+      example:
+        min-ncpu: 5
+        min-cores: 4
+        max-storage-mb: 2
+        max-ram-mb: 9
+        max-cores: 7
+        max-ncpu: 2
+        min-storage-mb: 3
+        min-ram-mb: 7
+    apporder:
+      type: object
+      properties:
+        app:
           type: string
-        TaskExecutionTime:
+        appprice:
+          type: string
+        volume:
+          type: integer
+          format: int64
+        tag:
+          type: string
+        datasetrestrict:
+          type: string
+        workerpoolrestrict:
+          type: string
+        requesterrestrict:
+          type: string
+      example:
+        app: app
+        volume: 0
+        appprice: appprice
+        datasetrestrict: datasetrestrict
+        workerpoolrestrict: workerpoolrestrict
+        requesterrestrict: requesterrestrict
+        tag: tag
+    datasetorder:
+      type: object
+      properties:
+        dataset:
+          type: string
+        datasetprice:
+          type: string
+        volume:
+          type: integer
+          format: int64
+        tag:
+          type: string
+        datasetrestrict:
+          type: string
+        workerpoolrestrict:
+          type: string
+        requesterrestrict:
+          type: string
+      example:
+        volume: 6
+        datasetprice: datasetprice
+        datasetrestrict: datasetrestrict
+        workerpoolrestrict: workerpoolrestrict
+        requesterrestrict: requesterrestrict
+        tag: tag
+        dataset: dataset
+    workerpoolorder:
+      type: object
+      properties:
+        workerpool:
+          type: string
+        workerpoolprice:
+          type: string
+        noofInstances:
+          type: integer
+          format: int64
+        OSdetails:
+          type: array
+          xml:
+            name: OSdetails
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/osRequirement'
+        quantativeParameters:
+          $ref: '#/components/schemas/quantativeParameters'
+        tee:
+          type: boolean
+        gpu-availability:
+          type: boolean
+        arch-type:
+          type: array
+          xml:
+            name: archType
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/processorArchitecture'
+        datasetrestrict:
+          type: string
+        apprestrict:
+          type: string
+        requesterrestrict:
+          type: string
+      example:
+        datasetrestrict: datasetrestrict
+        arch-type:
+        - cpu-architecture: cpu-architecture
+          gpu-architecture: gpu-architecture
+        - cpu-architecture: cpu-architecture
+          gpu-architecture: gpu-architecture
+        requesterrestrict: requesterrestrict
+        tee: true
+        OSdetails:
+        - os-type: os-type
+          is-64: 5
+        - os-type: os-type
+          is-64: 5
+        apprestrict: apprestrict
+        noofInstances: 1
+        gpu-availability: true
+        workerpoolprice: workerpoolprice
+        quantativeParameters:
+          min-ncpu: 5
+          min-cores: 4
+          max-storage-mb: 2
+          max-ram-mb: 9
+          max-cores: 7
+          max-ncpu: 2
+          min-storage-mb: 3
+          min-ram-mb: 7
+        workerpool: workerpool
+    appordersign:
+      type: object
+      properties:
+        app:
+          type: string
+        appprice:
+          type: string
+        volume:
+          type: integer
+          format: int64
+        tag:
+          type: string
+        datasetrestrict:
+          type: string
+        workerpoolrestrict:
+          type: string
+        requesterrestrict:
+          type: string
+        salt:
+          type: string
+        sign:
+          type: string
+    datasetordersign:
+      type: object
+      properties:
+        dataset:
+          type: string
+        datasetprice:
+          type: string
+        volume:
+          type: integer
+          format: int64
+        tag:
+          type: string
+        datasetrestrict:
+          type: string
+        workerpoolrestrict:
+          type: string
+        requesterrestrict:
+          type: string
+        salt:
+          type: string
+        sign:
+          type: string
+    workerpoolordersign:
+      type: object
+      properties:
+        workerpool:
+          type: string
+        workerpoolprice:
+          type: string
+        noofInstances:
+          type: integer
+          format: int64
+        OSdetails:
+          type: array
+          xml:
+            name: OSdetails
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/osRequirement'
+        quantativeParameters:
+          $ref: '#/components/schemas/quantativeParameters'
+        tee:
+          type: boolean
+        gpu-availability:
+          type: boolean
+        arch-type:
+          type: array
+          xml:
+            name: archType
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/processorArchitecture'
+        datasetrestrict:
+          type: string
+        apprestrict:
+          type: string
+        requesterrestrict:
+          type: string
+        salt:
+          type: string
+        sign:
           type: string
     ResponseDSL:
       type: object
       properties:
-        workerpoolsdetail:
+        apporder:
+          $ref: '#/components/schemas/apporder'
+        datasetorder:
+          $ref: '#/components/schemas/datasetorder'
+        workerpoolsorder:
           type: array
           xml:
             name: workerpool
             wrapped: true
           items:
-            $ref: '#/components/schemas/workerpooldetails'
+            $ref: '#/components/schemas/workerpoolorder'
       example:
-        workerpoolsdetail:
-        - workerpoolAddress: workerpoolAddress
-          price: price
-        - workerpoolAddress: workerpoolAddress
-          price: price
-    workerpooldetails:
+        apporder:
+          app: app
+          volume: 0
+          appprice: appprice
+          datasetrestrict: datasetrestrict
+          workerpoolrestrict: workerpoolrestrict
+          requesterrestrict: requesterrestrict
+          tag: tag
+        workerpoolsorder:
+        - datasetrestrict: datasetrestrict
+          arch-type:
+          - cpu-architecture: cpu-architecture
+            gpu-architecture: gpu-architecture
+          - cpu-architecture: cpu-architecture
+            gpu-architecture: gpu-architecture
+          requesterrestrict: requesterrestrict
+          tee: true
+          OSdetails:
+          - os-type: os-type
+            is-64: 5
+          - os-type: os-type
+            is-64: 5
+          apprestrict: apprestrict
+          noofInstances: 1
+          gpu-availability: true
+          workerpoolprice: workerpoolprice
+          quantativeParameters:
+            min-ncpu: 5
+            min-cores: 4
+            max-storage-mb: 2
+            max-ram-mb: 9
+            max-cores: 7
+            max-ncpu: 2
+            min-storage-mb: 3
+            min-ram-mb: 7
+          workerpool: workerpool
+        - datasetrestrict: datasetrestrict
+          arch-type:
+          - cpu-architecture: cpu-architecture
+            gpu-architecture: gpu-architecture
+          - cpu-architecture: cpu-architecture
+            gpu-architecture: gpu-architecture
+          requesterrestrict: requesterrestrict
+          tee: true
+          OSdetails:
+          - os-type: os-type
+            is-64: 5
+          - os-type: os-type
+            is-64: 5
+          apprestrict: apprestrict
+          noofInstances: 1
+          gpu-availability: true
+          workerpoolprice: workerpoolprice
+          quantativeParameters:
+            min-ncpu: 5
+            min-cores: 4
+            max-storage-mb: 2
+            max-ram-mb: 9
+            max-cores: 7
+            max-ncpu: 2
+            min-storage-mb: 3
+            min-ram-mb: 7
+          workerpool: workerpool
+        datasetorder:
+          volume: 6
+          datasetprice: datasetprice
+          datasetrestrict: datasetrestrict
+          workerpoolrestrict: workerpoolrestrict
+          requesterrestrict: requesterrestrict
+          tag: tag
+          dataset: dataset
+    workerpoolorderdetails:
       type: object
       properties:
-        workerpoolAddress:
+        workerpool:
           type: string
-        price:
+        workerIP:
           type: string
       example:
-        workerpoolAddress: workerpoolAddress
-        price: price
+        workerpool: workerpool
+        workerIP: workerIP
+    processorArchitecture:
+      type: object
+      properties:
+        cpu-architecture:
+          type: string
+        gpu-architecture:
+          type: string
+      example:
+        cpu-architecture: cpu-architecture
+        gpu-architecture: gpu-architecture
     createContract:
       type: object
       properties:
         pipelineID:
           type: string
-        selectedworkepool:
+        apporder:
+          $ref: '#/components/schemas/appordersign'
+        datasetorder:
+          $ref: '#/components/schemas/datasetordersign'
+        workerpoolorder:
           type: array
           xml:
-            name: workerpoolInfo
+            name: selectedworkerpool
             wrapped: true
           items:
-            $ref: '#/components/schemas/workerpooldetails'
-        beneficiaryInfo:
+            $ref: '#/components/schemas/workerpoolordersign'
+        maestroAgentID:
           type: string
         requesterInfo:
           type: string
-        signature:
+        sign:
           type: string
     responseforGetResource:
       type: object
@@ -509,35 +673,80 @@ components:
             name: workerpoolInfo
             wrapped: true
           items:
-            $ref: '#/components/schemas/workerpooldetails'
-        IPAddress:
-          type: array
-          items:
-            type: string
+            $ref: '#/components/schemas/workerpoolorderdetails'
       example:
         dealID: dealID
         workerpoolInfo:
-        - workerpoolAddress: workerpoolAddress
-          price: price
-        - workerpoolAddress: workerpoolAddress
-          price: price
-        IPAddress:
-        - IPAddress
-        - IPAddress
+        - workerpool: workerpool
+          workerIP: workerIP
+        - workerpool: workerpool
+          workerIP: workerIP
         pipelineID: pipelineID
     responseForContractCreation:
       type: object
       properties:
-        Requester:
+        requesterInfo:
           type: string
         requestID:
           type: string
         status:
           type: string
       example:
-        Requester: Requester
+        requesterInfo: requesterInfo
         requestID: requestID
         status: status
+    pipelineRequirements:
+      type: object
+      properties:
+        pipelineID:
+          type: string
+        requirements:
+          $ref: '#/components/schemas/requestorder'
+    requestorder:
+      type: object
+      properties:
+        appmaxprice:
+          type: integer
+          format: int64
+        datasetmaxprice:
+          type: integer
+          format: int64
+        workerpoolmaxprice:
+          type: integer
+          format: int64
+        executionRequirements:
+          $ref: '#/components/schemas/executionRequirments'
+        quantativeParameters:
+          $ref: '#/components/schemas/quantativeParameters'
+        ResourceProvider:
+          $ref: '#/components/schemas/ResourceProvider'
+        osRequirement:
+          $ref: '#/components/schemas/osRequirement'
+        cpu-architecture:
+          type: string
+        gpu-architecture:
+          type: string
+        gpu-availability:
+          type: boolean
+        tee:
+          type: boolean
+        maestroAgentID:
+          type: string
+        environmentParameters:
+          $ref: '#/components/schemas/environmentParameters'
+        requesterInfo:
+          type: string
+    osRequirement:
+      type: object
+      properties:
+        os-type:
+          type: string
+        is-64:
+          type: integer
+          format: int64
+      example:
+        os-type: os-type
+        is-64: 5
   securitySchemes:
     datacloud_auth:
       type: oauth2

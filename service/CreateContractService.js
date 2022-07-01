@@ -12,30 +12,30 @@ exports.getInventory = function(requestID) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = {
-  "App" : "App",
+  "app" : "app",
+  "datasetprice" : 2,
+  "appprice" : 5,
   "Category" : 1,
+  "requesterInfo" : "requesterInfo",
   "Block Number" : 6,
   "dealID" : "dealID",
   "TxHash" : "TxHash",
   "Block Timestamp" : "Block Timestamp",
-  "Dataset" : "Dataset",
-  "workerpool cost" : "workerpool cost",
-  "Params" : {
+  "Start Time" : "Start Time",
+  "workerpoolprice" : [ 5, 5 ],
+  "Final Time" : "Final Time",
+  "environmentParameters" : {
     "req2" : "req2",
     "req1" : "req1"
   },
-  "Workerpool" : "Workerpool",
-  "Start Time" : "Start Time",
-  "Trust" : 5,
-  "Final Time" : "Final Time",
-  "app cost" : "app cost",
-  "Requester" : "Requester",
+  "volume" : 0,
   "Callback" : "Callback",
-  "dataset cost" : "dataset cost",
-  "Volume" : 0,
+  "maestroAgentID" : "maestroAgentID",
+  "tee" : true,
   "First task idx" : "First task idx",
-  "Tag" : "Tag",
-  "Beneficiary" : "Beneficiary"
+  "gpu-availability" : true,
+  "dataset" : "dataset",
+  "workerpool" : [ "workerpool", "workerpool" ]
 };
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
@@ -47,7 +47,7 @@ exports.getInventory = function(requestID) {
 
 
 /**
- * request for creation the contract
+ * request for creation of the contract
  *
  * body CreateContract request for initiation of the deal
  * returns responseForContractCreation
@@ -56,7 +56,7 @@ exports.placeOrder = function(body) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = {
-  "Requester" : "Requester",
+  "requesterInfo" : "requesterInfo",
   "requestID" : "requestID",
   "status" : "status"
 };
