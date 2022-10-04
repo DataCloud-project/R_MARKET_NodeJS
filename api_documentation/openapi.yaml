@@ -16,8 +16,8 @@ externalDocs:
 servers:
 - url: https://virtserver.swaggerhub.com/ssgUPC/NodeJS/1.0.0
   description: SwaggerHub API Auto Mocking
-- url: https://datacloud.swagger.io/v2
-- url: http://datacloud.swagger.io/v2
+- url: http://localhost:5000/
+#- url: http://datacloud.swagger.io/v2
 tags:
 - name: Wallet-creation
   description: Operations about user
