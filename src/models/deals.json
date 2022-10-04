@@ -1,0 +1,43 @@
+{
+    "pipelineID": "string",
+    "apporder": {
+      "app": "string",
+      "appprice": "string",
+      "volume": 0,
+      "tag": "string",
+      "datasetrestrict": "string",
+      "workerpoolrestrict": "string",
+      "requesterrestrict": "string",
+      "salt": "string",
+      "sign": "string"
+    },
+    "datasetorder": {
+      "dataset": "string",
+      "datasetprice": "string",
+      "volume": 0,
+      "tag": "string",
+      "datasetrestrict": "string",
+      "workerpoolrestrict": "string",
+      "requesterrestrict": "string",
+      "salt": "string",
+      "sign": "string"
+    },
+    "workerpoolorder": [
+      {
+        "workerpool": "string",
+        "workerpoolprice": "string",
+        "volume": 0,
+        "category": 0,
+        "trust": 0,
+        "tag": "string",
+        "datasetrestrict": "string",
+        "apprestrict": "string",
+        "requesterrestrict": "string",
+        "salt": "string",
+        "sign": "string"
+      }
+    ],
+    "maestroAgentID": "string",
+    "requesterInfo": "string",
+    "sign": "string"
+  }
