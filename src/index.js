@@ -12,6 +12,8 @@ dbConnect().then((resp)=> {
 })
 const port = 5000;
 const app = express();
+// const keycloak = require('./configs/keycloak-config.js').initKeycloak();
+// app.use(keycloak.middleware());
 app.use(express.json());
 app.use('/', routes);
 //app.listen(5000);

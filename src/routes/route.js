@@ -17,60 +17,73 @@
  *        req2:
  *          type: string
  *    Deal:
- *     type: object
- *     properties:
- *       dealID:
- *         type: string
- *       TxHash:
- *         type: string
- *       Block Timestamp:
- *         type: string
- *       requesterInfo:
- *         type: string
- *       maestroAgentID:
- *         type: string
- *       Callback:
- *         type: string
- *       app:
- *         type: string
- *       workerpool:
- *         type: array
- *         items:
- *           type: string
- *       dataset:
- *         type: string
- *       environmentParameters:
- *         $ref: '#/components/schemas/Param'
- *       volume:
- *         type: integer
- *         format: int64
- *       First task idx:
- *         type: string
- *       Block Number:
- *         type: integer
- *         format: int64
- *       Category:
- *         type: integer
- *         format: int64
- *       tee:
- *         type: boolean
- *       gpu-availability:
- *         type: boolean
- *       workerpoolprice:
- *         type: array
- *         items:
- *           type: integer
- *           format: int64
- *       appprice:
- *         type: integer
- *         format: int64
- *       datasetprice:
- *         type: integer
- *         format: int64
- *       Start Time:
- *         type: string
- *       Final Time:
- *         type: string
+ *      type: object
+ *      properties:
+ *        dealID:
+ *          type: string
+ *        TxHash:
+ *          type: string
+ *        Block Timestamp:
+ *          type: string
+ *        requesterInfo:
+ *          type: string
+ *        maestroAgentID:
+ *          type: string
+ *        Callback:
+ *          type: string
+ *        app:
+ *          type: string
+ *        workerpool:
+ *          type: array
+ *          items:
+ *            type: string
+ *        dataset:
+ *          type: string
+ *        environmentParameters:
+ *          $ref: '#/components/schemas/Param'
+ *        volume:
+ *          type: integer
+ *          format: int64
+ *        quantativeParameters:
+ *          $ref: '#/components/schemas/quantativeParameters'  
+ *        cpu-architecture:
+ *          type: string
+ *        gpu-architecture:
+ *          type: string
+ *        gpu-availability:
+ *          type: boolean
+ *        tee:
+ *          type: boolean          
+ *        trust:
+ *          type: integer
+ *          format: int64
+ *        osRequirement: 
+ *          $ref: '#/components/schemas/osRequirement' 
+ *        First task idx:
+ *          type: string
+ *        Block Number:
+ *          type: integer
+ *          format: int64
+ *        Category:
+ *          type: integer
+ *          format: int64
+ *        workerpoolprice:
+ *          type: array
+ *          items:
+ *            type: integer
+ *            format: int64
+ *        appprice:
+ *          type: integer
+ *          format: int64
+ *        datasetprice:
+ *          type: integer
+ *          format: int64
+ *        Start Time:
+ *          type: string
+ *        Final Time:
+ *          type: string
+ * 
+ * 
  *    executionRequirments:
  *     type: object
  *     properties:
@@ -80,6 +93,7 @@
  *       max-instant:
  *         type: integer
  *         format: int64
+ * 
  *    ResourceProvider:
  *     type: object
  *     properties:
@@ -89,6 +103,8 @@
  *         type: string
  *       location:
  *         type: string
+ * 
+ * 
  *    environmentParameters:
  *     type: object
  *     properties:
@@ -96,6 +112,8 @@
  *         type: string
  *       envReq2:
  *         type: string
+ * 
+ * 
  *    quantativeParameters:
  *     type: object
  *     properties:
@@ -123,6 +141,8 @@
  *       max-cores:
  *         type: integer
  *         format: int64
+ * 
+ * 
  *    apporder:
  *     type: object
  *     properties:
@@ -141,6 +161,8 @@
  *         type: string
  *       requesterrestrict:
  *         type: string
+ * 
+ * 
  *    datasetorder:
  *     type: object
  *     properties:
@@ -159,22 +181,38 @@
  *         type: string
  *       requesterrestrict:
  *         type: string
+ * 
+ * 
  *    workerpoolorder:
  *     type: object
  *     properties:
  *       workerpool:
  *         type: string
- *       workerpoolprice:
+ *       workerpoolprice: 
  *         type: string
  *       volume:
  *         type: integer
  *         format: int64
+ *       quantativeParameters:
+ *         $ref: '#/components/schemas/quantativeParameters'  
  *       category:
  *         type: integer
  *         format: int64
+ *       cpu-architecture:
+ *         type: string
+ *       gpu-architecture:
+ *         type: string
+ *       gpu-availability:
+ *         type: boolean
+ *       tee:
+ *         type: boolean          
  *       trust:
  *         type: integer
  *         format: int64
+ *       osRequirement: 
+ *         $ref: '#/components/schemas/osRequirement'  
+ *       maestroAgentAddr:
+ *         type: string
  *       tag:
  *         type: string
  *       datasetrestrict:
@@ -183,6 +221,8 @@
  *         type: string
  *       requesterrestrict:
  *         type: string
+ * 
+ * 
  *    appordersign:
  *     type: object
  *     properties:
@@ -239,12 +279,26 @@
  *       volume:
  *         type: integer
  *         format: int64
+ *       quantativeParameters:
+ *         $ref: '#/components/schemas/quantativeParameters'  
  *       category:
  *         type: integer
  *         format: int64
+ *       cpu-architecture:
+ *         type: string
+ *       gpu-architecture:
+ *         type: string
+ *       gpu-availability:
+ *         type: boolean
+ *       tee:
+ *         type: boolean          
  *       trust:
  *         type: integer
  *         format: int64
+ *       osRequirement: 
+ *         $ref: '#/components/schemas/osRequirement'  
+ *       maestroAgentAddr:
+ *         type: string
  *       tag:
  *         type: string
  *       datasetrestrict:
@@ -305,8 +359,8 @@
  *           wrapped: true
  *         items:
  *           $ref: '#/components/schemas/workerpoolordersign'
- *       maestroAgentAddr:
- *         type: string
+ *       #maestroAgentAddr:
+ *         #type: string
  *       requesterInfo:
  *         type: string
  *       sign:
@@ -394,41 +448,23 @@
  *      properties:
  *       workerpool:
  *         type: string
- *       quantativeParameters:
- *         $ref: '#/components/schemas/quantativeParameters'
  *       ResourceProvider:
  *         $ref: '#/components/schemas/ResourceProvider'
- *       osRequirement:
- *         $ref: '#/components/schemas/osRequirement'
- *       cpu-architecture:
- *         type: string
- *       gpu-architecture:
- *         type: string
- *       gpu-availability:
- *         type: boolean
- *       tee:
- *         type: boolean
- *       maestroAgentAddr: 
- *         type: string
  *       environmentParameters:
  *         $ref: '#/components/schemas/environmentParameters'      
  *       
  *       
  *   securitySchemes:
- *     datacloud_auth:
- *      type: oauth2
- *      flows:
- *        implicit:
- *          authorizationUrl: http://datacloud.swagger.io/oauth/dialog
- *          scopes:
- *            write:datcloudResources: modify order in your account
- *            read:datcloudResources: read your order
- *     api_key:
+ *     Bearer:
  *      type: apiKey
- *      name: api_key
+ *      description: Enter you your Keyclaok bearer token in the format bellow (don't forget the "Bearer") Bearer YOUR_ACCESS_TOKEN
+ *      #authorizationUrl: https://datacloud-auth.euprojects.net/auth/
+ *      name: Authorization
  *      in: header
  */
 let router = require('express').Router();
+// const keycloak = require('../configs/keycloak-config.js').getKeycloak();
+
 
 router.get('/', function(req,res){
     res.json({
@@ -462,6 +498,8 @@ var resourceController = require('../Controllers/ResourceController');
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ResponseDSL'
+ *       401:
+ *          description:
  *       400:
  *         description: Missing values!!! Invalid resource requirements information; correct the format
  *         content: {}
