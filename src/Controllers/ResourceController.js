@@ -1,43 +1,25 @@
-const dbConnectAppOrder = require('../collections/apporder');
-const dbConnectDataSetOrder =  require('../collections/datasetorder');
-const dbConnectWorkerPoolOrder =  require('../collections/workerpoolorder');
+exports.findCompatibleResource = async (req, resp) => {
+	const axios = require("axios");
 
-exports.findCompatibleResource = async (req, resp)=>{
-    console.log(req.body);
-    let dataAppOrder = await dbConnectAppOrder();
-    let dataDataSetOrder = await dbConnectDataSetOrder();
-    let dataWorkerPoolOrder = await dbConnectWorkerPoolOrder();
-    //console.log('requirementsBodyApp:',req.body.requirements.app);
-    const queryForAppOrder = {app:req.body.requirements.app};
-   // console.log(queryForAppOrder);
-    const optionsForAppOrder = {
-        sort:{"_id": 1}
-    };
-    const appOrderData = await dataAppOrder.findOne(queryForAppOrder, optionsForAppOrder);
-    console.log(appOrderData);
+	const workerpoolOrderDataFromAPI = await axios.get('http://20.71.159.181:3000/workerpoolorders?chainId=65535');
+	var result = workerpoolOrderDataFromAPI.data.orders;
 
-    //console.log('requirementsBodyApp:',req.body.requirements.dataset);
-    const queryForDataSetOrder = {dataset:req.body.requirements.dataset};
-    const optionsForDataSetOrder = {
-        sort:{"_id": 1}
-    };
-    const dataSetOrderData = await dataDataSetOrder.findOne(queryForDataSetOrder, optionsForDataSetOrder);
-    console.log('dataSetOrderData:',dataSetOrderData);
+	/*
+		const requirements = req.body.requirements;
+		const quantativeParameters = requirements.quantativeParameters;
+		const osRequirement = requirements.osRequirement;
+		const tee = requirements.tee;
+		*/
 
-   // console.log('executionRequirements:',req.body.requirements.executionRequirements.maxinstant);
-    const noOfInstances = req.body.requirements.executionRequirements.maxinstant;
-    const queryForWorkerPoolOrder = {noofInstances:{$gt:2}};
-    console.log('queryWP:',queryForWorkerPoolOrder);
-  //  const query = { runtime: { $lt: 15 } };
 
-    const optionsForWorkerPoolOrder = {
-        sort:{"_id": 1}
-    };
-    //console.log('dataWorkerPoolOrder:',dataWorkerPoolOrder);
-    const workerPoolOrderData = await dataWorkerPoolOrder.find(queryForWorkerPoolOrder,optionsForWorkerPoolOrder).toArray();
-   console.log('workerPoolOrderData',workerPoolOrderData);
-    //let result = await data.insertOne(req.body)  
-    var result = {appOrderData,dataSetOrderData,workerPoolOrderData};
-    resp.send(result);
-    //resp.send(JSON.stringify(result));
+	var array = new Array(JSON.stringify(req.body, null, "\t"));
+	for (var i = 0; i < result.length; ++i) {
+		var jsonObject =
+		{
+			orderHash: result[i]['orderHash'],
+			category: result[i]['order'].category
+		}
+		array.push(JSON.stringify(jsonObject, null, "\t"));
+	}
+	resp.send(array);
 };
