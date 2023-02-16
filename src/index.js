@@ -28,17 +28,17 @@ app.use('/', routes);
 
 var fs = require('fs');
 var https = require('https');
-var privateKey  = fs.readFileSync('server.key', 'utf8');
-var certificate = fs.readFileSync('server.crt', 'utf8');
+var privateKey  = fs.readFileSync('privkey.pem');
+var certificate = fs.readFileSync('certificate.pem');
 
-var credentials = {key: privateKey, cert: certificate, passphrase: 'datacloud'};
+var credentials = {key: privateKey, cert: certificate};
 
 // your express configuration here
 
 var httpsServer = https.createServer(credentials, app);
 
 httpsServer.listen(port, () => {
-    console.log(`Example app listening at https://127.0.0.1:${port}`)
+    console.log(`Example app listening at http://127.0.0.1:${port}`)
     swaggerDocs(app, port)
   })
 // app.use(
