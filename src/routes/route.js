@@ -156,5 +156,36 @@ var contractController = require('../Controllers/ContractController');
  */
 router.get('/contracts/list', contractController.getList);
 
+var resultController = require('../Controllers/ResultController');
+/**
+ * @openapi
+ * '/contracts/reserved':
+ *  get:
+ *     tags:
+ *     - Get My Resources
+ *     summary: Request the list of resources reserved by a given user
+ *     parameters:
+ *       - in: query
+ *         name: userAddress
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: User Address
+ *     responses:
+ *       200:
+ *         description: successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ResponseForContractListing'
+ *       400:
+ *         description: Invalid user address
+ *         content: {}
+ *     x-codegen-request-body-name: Contract Initiation
+ *     security:
+ *     - api_key: []
+ */
+router.get('/contracts/reserved', resultController.getReservedResources);
+
 module.exports = router;
 

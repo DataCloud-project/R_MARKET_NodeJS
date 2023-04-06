@@ -23,7 +23,7 @@ var express = require("express"),
       },
       servers: [
         {
-          url: "http://20.71.159.181:5000/",
+          url: "https://datacloud-r-market.westeurope.cloudapp.azure.com:5000/",
         },
       ],
     },
