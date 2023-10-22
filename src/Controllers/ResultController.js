@@ -2,7 +2,7 @@ exports.getReservedResources = async (req, resp) => {
 	const { Kafka, logLevel } = require('kafkajs')
 	const requesterAddress = req.query.userAddress.toLowerCase();
 	const kafka = new Kafka({
-		brokers: ['20.71.159.181:9092'],
+		brokers: ['10.0.0.5:9092'],
 		logLevel: logLevel.ERROR,
 	})
 

@@ -5,37 +5,41 @@
  *    quantativeParameters:
  *     type: object
  *     properties:
- *       min-ncpu:
- *         type: integer
- *         format: int64
- *       max-ncpu:
- *         type: integer
- *         format: int64
- *       min-ram-mb:
- *         type: integer
- *         format: int64
- *       max-ram-mb:
- *         type: integer
- *         format: int64
- *       min-storage-mb:
- *         type: integer
- *         format: int64
- *       max-storage-mb:
- *         type: integer
- *         format: int64
- *       min-cores:
- *         type: integer
- *         format: int64
- *       max-cores:
- *         type: integer
- *         format: int64
+ *       cpu:
+ *          type: object
+ *          properties:
+ *              min:
+ *                  type: integer
+ *                  format: int64
+ *              max:
+ *                  type: integer
+ *                  format: int64
+ *       ram:
+ *          type: object
+ *          properties:
+ *              min:
+ *                  type: integer
+ *                  format: int64
+ *              max:
+ *                  type: integer
+ *                  format: int64
+ *       bandwidth:
+ *          type: object
+ *          properties:
+ *              min:
+ *                  type: integer
+ *                  format: int64
+ *              max:
+ *                  type: integer
+ *                  format: int64
  * 
  * 
  *    pipelineRequirements:
  *      type: object
  *      properties:
  *       requirements:
- *         $ref: '#/components/schemas/requirements'
+ *         $ref: '#/components/schemas/quantativeParameters'
+ *
  *    requirements:
  *      type: object
  *      properties:
